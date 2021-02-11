@@ -1,4 +1,7 @@
-def allowsToDeployTo(org) {
-    echo "called allows to deploy to ${org}"
-    return true
-}
+def call(Map config=[:]) {
+
+    if (config.allowsToDeployTo == "QA-Merge") {
+        echo "called allows to deploy to qa merge"
+        return true
+    } else {
+       return false
