@@ -1,4 +1,4 @@
-import utils.Constants
+import Constants
 def call(Map config=[:]) {
 
     if (config.allowsToDeployTo == "QA-Merge") {
