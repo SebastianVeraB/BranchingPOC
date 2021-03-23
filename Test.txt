@@ -4,3 +4,4 @@ line 3
 line 4
 New line 5
 Line 6
+Line 7
