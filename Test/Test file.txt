@@ -1,1 +1,121 @@
-testsdfsdf asdasd
+/**
+ * @name AccountForPSNDomainTest
+ * @author SOD Team
+ * @description Test class for AccountForPSN object domain
+ * @date 03-16-2021
+ *
+ */
+@isTest
+public with sharing class AccountForPSNDomainTest {
+    private static final String TOO_LONG_NAME_ACCOUNT_FOR_PSN = 'rockheadwarrior52';
+    private static final String ACCOUNT_FOR_PSN_NAME = 'rickspace33';
+
+    /**
+     * @description WHEN I try to create a new AccountForPSN__c
+     *              AND I want to set the Status__c picklist field
+     *              THEN I can see "Active" as an option
+     *              THEN I also can see "Closed" as an option
+     *              THEN I also can see "Permanently Suspended" as an option
+     *              THEN I also can see "Temporary Suspended" as an option Closed
+     *              THEN I also can see "Communication Suspension" as an option
+     *              THEN I also can see "Error (Unknown)" as an option
+     */
+    @isTest
+    public static void accountForPSNSetStatsTest() {
+        List<String> picklistValues = new List<String>();
+        Schema.DescribeFieldResult accountStatus = AccountForPSN__c.Status__c.getDescribe();
+        List<Schema.PicklistEntry> statusPicklistValues = accountStatus.getPicklistValues();
+        for (Schema.PicklistEntry picklistVal : statusPicklistValues) {
+            picklistValues.add(picklistVal.getLabel());
+        }
+        System.assertEquals(6, picklistValues.size(), 'Different amount of possible states');
+        System.assertEquals(Constants.ACTIVE_STATUS, picklistValues[0], 'Unexpected status in position');
+        System.assertEquals(Constants.PSN_ACCOUNTS.STATUS_CLOSED, picklistValues[1], 'Unexpected status in position');
+        System.assertEquals(
+            Constants.PSN_ACCOUNTS.STATUS_PERMANENTLY_SUSPENDED,
+            picklistValues[2],
+            'Unexpected status in position'
+        );
+        System.assertEquals(
+            Constants.PSN_ACCOUNTS.STATUS_TEMPORARY_SUSPENDED,
+            picklistValues[2],
+            'Unexpected status in position'
+        );
+        System.assertEquals(
+            Constants.PSN_ACCOUNTS.STATUS_COMMUNICATED_SUSPENSION,
+            picklistValues[4],
+            'Unexpected status in position'
+        );
+        System.assertEquals(
+            Constants.PSN_ACCOUNTS.STATUS_ERROR_UNKNOWN,
+            picklistValues[5],
+            'Unexpected status in position'
+        );
+    }
+
+    /**
+     * @description
+     * GIVEN a System Admin
+     * WHEN creating an Account For PSN
+     * AND Name is populated with a text SHORTER or EQUALS 16 characters
+     * THEN the record is created successfully
+     */
+    @isTest
+    static void createAccountForPSNWithNameTest() {
+        User admin = TestClassUtility.getTestUser(Constants.PROFILES.SYS_ADMIN);
+
+        AccountForPSNSelector selector = new AccountForPSNSelector();
+        List<AccountForPSN__c> initialAccountsForPSN = selector.getAllAccountsForPSN();
+        AccountForPSN__c longNameAccount = TestClassUtility.createAccountsForPSN(1, false).get(0);
+
+        Test.startTest();
+        System.runAs(admin) {
+            longNameAccount.Name = ACCOUNT_FOR_PSN_NAME;
+            insert longNameAccount;
+        }
+        Test.stopTest();
+
+        List<AccountForPSN__c> finalAccountsForPSN = selector.getAllAccountsForPSN();
+        System.assertEquals(
+            initialAccountsForPSN.size() + 1,
+            finalAccountsForPSN.size(),
+            'Expected new Account For PSN record to be created'
+        );
+    }
+
+    /**
+     * @description
+     * GIVEN a System Admin
+     * WHEN creating an Account For PSN
+     * AND Name is populated with a text LONGER than 16 characters
+     * THEN the record is not created due the Validation Rule added on Account For PSN
+     */
+    @isTest
+    static void createAccountForPSNWithNameTooLongTest() {
+        Boolean isInserted = true;
+        String errorMessage;
+        User admin = TestClassUtility.getTestUser(Constants.PROFILES.SYS_ADMIN);
+
+        AccountForPSNSelector selector = new AccountForPSNSelector();
+        List<AccountForPSN__c> initialAccountsForPSN = selector.getAllAccountsForPSN();
+        AccountForPSN__c accountForPSNTest = TestClassUtility.createAccountsForPSN(1, false).get(0);
+
+        Test.startTest();
+        System.runAs(admin) {
+            accountForPSNTest.Name = TOO_LONG_NAME_ACCOUNT_FOR_PSN;
+        }
+        try {
+            insert accountForPSNTest;
+        } catch (DmlException ex) {
+            isInserted = false;
+            errorMessage = ex.getMessage();
+        }
+        Test.stopTest();
+
+        System.assert(
+            errorMessage.contains(Label.AccountForPSNNameTooLongError),
+            'Expected Validation Rule to prevent saving the record'
+        );
+        System.assert(!isInserted, 'Expected Validation Rule to prevent saving the record');
+    }
+}
