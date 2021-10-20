@@ -22,7 +22,7 @@ public with sharing class AccountForPSNSelector {
                 PlayStation_Plus_Status__c,
                 PlayStation_Plus_End_Date__c
             FROM AccountForPSN__c
-            WHERE Id IN :accountForPSNId
+            WHERE Id IN :accountForPSNIds
         ];
     }
 
