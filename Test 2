@@ -11,7 +11,8 @@ public with sharing class AccountForPSNSelector {
             SELECT
                 Id,
                 Name,
-                Phone__c,       
+                Phone__c, 
+                Country__c      
                 First_Name__c,
                 Last_Name__c,
                 Status__c,
