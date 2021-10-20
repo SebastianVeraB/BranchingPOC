@@ -1,2 +1,49 @@
-Line 1
-Line 2
+/**
+ * @description SOQLs related to Account for PSN
+ * @date 01-28-2021
+ */
+public with sharing class AccountForPSNSelector {
+    private static final String BASE_QUERY = 'SELECT {0} FROM AccountForPSN__c';
+    private static final String BASE_SOSL_QUERY = 'FIND {0} IN NAME FIELDS RETURNING AccountForPSN__c({1})';
+
+
+    public AccountForPSN__c getAccountForPSNByAccountId(String accountForPSNAccountId) {
+        return [
+            SELECT Id, Name, Sign_in_Id__c, Phone__c, Account_Id__c
+            FROM AccountForPSN__c
+            WHERE Account_Id__c = :accountForPSNAccountId
+        ];
+    }
+
+    public List<AccountForPSN__c> getAllAccountsForPSN() {
+        return [SELECT Id FROM AccountForPSN__c];
+    }
+
+    public List<AccountForPSN__c> searchAccountForPsn(
+        String fieldApi,
+        String fieldValue,
+        List<String> psnAccountSelectFields
+    ) {
+        List<String> selectFields = new List<String>{ String.join(psnAccountSelectFields, ', ') };
+        // we need a SOSL to search by Online Id (Name) because it's an encrypted field
+        if (fieldApi == Constants.ONLINE_ID) {
+            String queryString = String.format(
+                BASE_SOSL_QUERY,
+                new List<String>{ ':fieldValue', String.join(selectFields, ', ') }
+            );
+
+            List<List<AccountForPSN__c>> accountsForPSN = Search.query(queryString);
+            return (List<AccountForPSN__c>) accountsForPSN[0];
+        }
+
+        String queryString = String.format(BASE_QUERY, selectFields);
+        queryString +=
+            ' WHERE ' +
+            String.escapeSingleQuotes(fieldApi) +
+            ' = \'' +
+            String.escapeSingleQuotes(fieldValue) +
+            '\'';
+
+        return Database.query(queryString);
+    }
+}
