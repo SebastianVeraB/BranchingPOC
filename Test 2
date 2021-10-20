@@ -6,6 +6,23 @@ public with sharing class AccountForPSNSelector {
     private static final String BASE_QUERY = 'SELECT {0} FROM AccountForPSN__c';
     private static final String BASE_SOSL_QUERY = 'FIND {0} IN NAME FIELDS RETURNING AccountForPSN__c({1})';
 
+    public List<AccountForPSN__c> getAccountsForPSNById(Set<Id> accountForPSNIds) {
+        return [
+            SELECT
+                Id,
+                Name,
+                First_Name__c,
+                Last_Name__c,
+                Status__c,
+                Region__c,
+                PlayStation_Now_Status__c,
+                PlayStation_Now_End_Date__c,
+                PlayStation_Plus_Status__c,
+                PlayStation_Plus_End_Date__c
+            FROM AccountForPSN__c
+            WHERE Id IN :accountForPSNId
+        ];
+    }
 
     public AccountForPSN__c getAccountForPSNByAccountId(String accountForPSNAccountId) {
         return [
