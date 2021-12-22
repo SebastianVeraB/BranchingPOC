@@ -43,18 +43,21 @@ public with sharing class AccountForPSNSelector {
         String fieldApi,
         String fieldValue,
         List<String> psnAccountSelectFields
+        
     ) {
         List<String> selectFields = new List<String>{ String.join(psnAccountSelectFields, ', ') };
         // we need a SOSL to search by Online Id (Name) because it's an encrypted field
         if (fieldApi == Constants.ONLINE_ID) {
             String queryString = String.format(
                 BASE_SOSL_QUERY,
+
                 new List<String>{ ':fieldValue', String.join(selectFields, ', ') }
             );
 
             List<List<AccountForPSN__c>> accountsForPSN = Search.query(queryString);
             return (List<AccountForPSN__c>) accountsForPSN[0];
         }
+
 
         String queryString = String.format(BASE_QUERY, selectFields);
         queryString +=
