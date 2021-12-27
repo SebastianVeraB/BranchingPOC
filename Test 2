@@ -6,6 +6,7 @@ public with sharing class AccountForPSNSelector {
     private static final String BASE_QUERY = 'SELECT {0} FROM AccountForPSN__c';
     private static final String BASE_SOSL_QUERY = 'FIND {0} IN NAME FIELDS RETURNING AccountForPSN__c({1})';
 
+
     public List<AccountForPSN__c> getAccountsForPSNById(Set<Id> accountForPSNIds) {
         return [
             SELECT
@@ -24,6 +25,7 @@ public with sharing class AccountForPSNSelector {
                 PlayStation_Plus_End_Date__c
             FROM AccountForPSN__c
             WHERE Id IN :accountForPSNIds
+
         ];
     }
 
@@ -43,6 +45,7 @@ public with sharing class AccountForPSNSelector {
         String fieldApi,
         String fieldValue,
         List<String> psnAccountSelectFields
+
         
     ) {
         List<String> selectFields = new List<String>{ String.join(psnAccountSelectFields, ', ') };
@@ -62,6 +65,7 @@ public with sharing class AccountForPSNSelector {
         String queryString = String.format(BASE_QUERY, selectFields);
         queryString +=
             ' WHERE ' +
+            
             String.escapeSingleQuotes(fieldApi) +
             ' = \'' +
             String.escapeSingleQuotes(fieldValue) +
