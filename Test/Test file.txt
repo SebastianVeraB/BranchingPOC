@@ -110,6 +110,7 @@ public with sharing class AccountForPSNDomainTest {
         } catch (DmlException ex) {
             isInserted = false;
             errorMessage = ex.getMessage();
+            
         }
         Test.stopTest();
 
