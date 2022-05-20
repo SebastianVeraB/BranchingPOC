@@ -38,7 +38,8 @@ public with sharing class AccountForPSNDomainTest {
         );
         System.assertEquals(
             Constants.PSN_ACCOUNTS.STATUS_TEMPORARY_SUSPENDED,
-            picklistValues[2],
+            picklistValues
+            [2],
             'Unexpected status in position'
         );
         System.assertEquals(
