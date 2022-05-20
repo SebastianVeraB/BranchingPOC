@@ -117,6 +117,7 @@ public with sharing class AccountForPSNDomainTest {
             errorMessage.contains(Label.AccountForPSNNameTooLongError),
             'Expected Validation Rule to prevent saving the record'
         );
-        System.assert(!isInserted, 'Expected Validation Rule to prevent saving the record');
+        System.assert(!isInserted, 'Expected Validation Rule to prevent saving the record')
+        ;
     }
 }
