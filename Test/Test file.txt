@@ -97,7 +97,8 @@ public with sharing class AccountForPSNDomainTest {
         String errorMessage;
         User admin = TestClassUtility.getTestUser(Constants.PROFILES.SYS_ADMIN);
 
-        AccountForPSNSelector selector = new AccountForPSNSelector();
+        AccountFor
+        PSNSelector selector = new AccountForPSNSelector();
         List<AccountForPSN__c> initialAccountsForPSN = selector.getAllAccountsForPSN();
         AccountForPSN__c accountForPSNTest = TestClassUtility.createAccountsForPSN(1, false).get(0);
 
